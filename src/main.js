@@ -6,4 +6,6 @@ import Countdown from 'vue3-flip-countdown'
 import './assets/style.css'
 import './assets/icon.css'
 
+window.$ = window.jQuery = require('jquery');
+
 createApp(App).use(router).use(Countdown).mount('#app')
