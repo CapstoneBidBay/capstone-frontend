@@ -83,7 +83,7 @@
 	var ttwindowWidth = window.innerWidth || $window.width();
 
 	//init data slick
-	$ttPageContent.find('[data-slick]').slick();
+	//$ttPageContent.find('[data-slick]').slick();
 
 	dataBg('#tt-pageContent [data-bg]');
 	function dataBg(el) {
