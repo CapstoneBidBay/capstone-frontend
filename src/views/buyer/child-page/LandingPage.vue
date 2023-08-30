@@ -8,5 +8,6 @@
         <PosterSection />
         <BrandSection />
         <OutstandingItem />
+        <!-- page here -->
     </div>
 </template>

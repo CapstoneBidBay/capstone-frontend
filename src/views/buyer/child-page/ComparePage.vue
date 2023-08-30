@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue';
-
+// out of scope
 const products = ref([
   {
     imageSrc: "https://static.nike.com/a/images/t_PDP_1280_v1/f_auto,q_auto:eco/9b26aa8f-0173-409b-b30a-7ce2d88573a4/custom-nike-dunk-low-by-you.png",
