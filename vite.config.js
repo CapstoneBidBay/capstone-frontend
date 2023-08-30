@@ -17,9 +17,9 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url))
     }
   },
-  optimizeDeps: {
-    entries: ['/src/assets/bundle.js']
-  }
+  // optimizeDeps: {
+  //   entries: ['/src/assets/bundle.js']
+  // }
 })
 
 

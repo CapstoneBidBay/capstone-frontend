@@ -185,13 +185,6 @@
 
 	// lazyLoad
 	(function () {
-		new LazyLoad();
-		new LazyLoad({
-			elements_selector: "iframe"
-		});
-		new LazyLoad({
-			elements_selector: "video"
-		});
 	}());
 
 	// header, search, at focus input - result of search
@@ -596,7 +589,6 @@
 					success: function(data) {
 						var $item = $(data);
 						$('#js-include-desktop-menu').append($item);
-						new LazyLoad();
 						toggle_header_menu();
 					}
 			});
@@ -774,7 +766,6 @@
 								}]
 						});
 				});
-					new LazyLoad();
 					var objAjax = $this.closest('.tt-ajax-tabs'),
 						objAjaxValueOld = objAjax.innerHeight();
 
@@ -800,7 +791,6 @@
 		};
 	});
 	$('.modal').on('shown.bs.modal', function (e) {
-			new LazyLoad();
 			var objSlickSlider = $(this).find('.slick-slider');
 			if(objSlickSlider.length){
 					objSlickSlider.each(function() {
@@ -2477,7 +2467,6 @@ if($ttsearch2Input.length && $ttSearch2Results.length){
 					success: function(data){
 						var $item = $(data);
 						searchInclude.append($item);
-						new LazyLoad();
 					}
 				});
 			}
