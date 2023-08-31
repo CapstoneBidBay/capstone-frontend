@@ -1,3 +1,4 @@
+import jQuery from 'jquery';
 (function ($) {
 	"use strict";
 
@@ -2266,7 +2267,7 @@
 if (typeof define === 'function' && define.amd) {
 	define(['jquery'], factory);
 } else if (typeof exports === 'object') {
-	module.exports = factory(require('jquery'));
+	module.exports = factory(jQuery);
 } else {
 	factory(jQuery);
 }
