@@ -1,7 +1,6 @@
 import { fileURLToPath, URL } from 'node:url'
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
-import inject from '@rollup/plugin-inject'
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -13,9 +12,9 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url))
     }
   },
-  // optimizeDeps: {
-  //   entries: ['/src/assets/bundle.js']
-  // }
+  optimizeDeps: {
+    entries: ['/src/assets/bundle.js']
+  }
 })
 
 

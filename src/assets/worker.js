@@ -1,7 +1,5 @@
-import jQuery from 'jquery';
 (function ($) {
 	"use strict";
-
 	var $document = $(document),
 			$window = $(window),
 			$body = $('body'),
@@ -186,6 +184,13 @@ import jQuery from 'jquery';
 
 	// lazyLoad
 	(function () {
+		new LazyLoad();
+		new LazyLoad({
+			elements_selector: "iframe"
+		});
+		new LazyLoad({
+			elements_selector: "video"
+		});
 	}());
 
 	// header, search, at focus input - result of search
@@ -590,6 +595,7 @@ import jQuery from 'jquery';
 					success: function(data) {
 						var $item = $(data);
 						$('#js-include-desktop-menu').append($item);
+						new LazyLoad();
 						toggle_header_menu();
 					}
 			});
@@ -767,6 +773,7 @@ import jQuery from 'jquery';
 								}]
 						});
 				});
+					new LazyLoad();
 					var objAjax = $this.closest('.tt-ajax-tabs'),
 						objAjaxValueOld = objAjax.innerHeight();
 
@@ -792,6 +799,7 @@ import jQuery from 'jquery';
 		};
 	});
 	$('.modal').on('shown.bs.modal', function (e) {
+			new LazyLoad();
 			var objSlickSlider = $(this).find('.slick-slider');
 			if(objSlickSlider.length){
 					objSlickSlider.each(function() {
@@ -2267,7 +2275,7 @@ import jQuery from 'jquery';
 if (typeof define === 'function' && define.amd) {
 	define(['jquery'], factory);
 } else if (typeof exports === 'object') {
-	module.exports = factory(jQuery);
+	module.exports = factory(require('jquery'));
 } else {
 	factory(jQuery);
 }
@@ -2468,6 +2476,7 @@ if($ttsearch2Input.length && $ttSearch2Results.length){
 					success: function(data){
 						var $item = $(data);
 						searchInclude.append($item);
+						new LazyLoad();
 					}
 				});
 			}
@@ -2731,3 +2740,4 @@ if($header.hasClass('embed-mobilemenu')){
 };
 
 })(jQuery);
+

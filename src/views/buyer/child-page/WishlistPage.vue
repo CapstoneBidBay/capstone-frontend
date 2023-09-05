@@ -5,8 +5,8 @@ const products = [
 		id: 1,
 		name: 'Flared Shift Dress',
 		image: 'https://static.nike.com/a/images/t_PDP_1280_v1/f_auto,q_auto:eco/9b26aa8f-0173-409b-b30a-7ce2d88573a4/custom-nike-dunk-low-by-you.png',
-		newPrice: '200.0000 VND',
-		oldPrice: '500.0000 VND',
+		newPrice: '200.000 VND',
+		oldPrice: '500.000 VND',
 	}, {
 		id: 2,
 		name: 'Flared Shift Dress',
