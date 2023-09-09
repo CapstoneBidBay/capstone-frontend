@@ -1,7 +1,6 @@
 <script setup>
 import Modal from '@/components/common-components/Modal.vue';
 import Input from '@/components/common-components/Input.vue';
-import SearchInput from '../components/common-components/SearchInput.vue';
 import Label from '../components/common-components/Label.vue';
 import { Icon } from '@iconify/vue';
 import Countdown from '@/components/common-components/Countdown.vue';
@@ -16,13 +15,6 @@ const inputVal = ref('')
 
 <template>
   <div>
-    <div class="flex container justify-between">
-      <ItemBox product-name="Super long long long long name long long "/>
-      <ItemBox />
-      <ItemBox />
-      <ItemBox />
-      <ItemBox />
-    </div>
     <Modal v-if="isModalActive" title="Test Modal" @decline-modal="() => isModalActive = false">
       <div>
         <Label for="test">Label test</Label>
