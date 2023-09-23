@@ -51,7 +51,7 @@ const submitForm = async () => {
 		})
 		.catch(e => {
 			if(e.response.data.message.includes("already existed")){
-				toast.updateLoadingToast("Số điện thoại đã được đăng kí")
+				toast.updateLoadingToast(toastId, "Số điện thoại đã được đăng kí", true)
 			} else {
 				toast.updateLoadingToast(toastId, "Đăng kí thất bại", true)
 			}
@@ -121,7 +121,7 @@ const onOtpInputChange = (value) => {
 							</div>
 							<div class="form-group flex items-center gap-3">
 								<label>Bạn muốn là:</label>
-								<Dropdown v-model="selected" :data="roleOptions"/>
+								<Dropdown v-model="selected" :data="roleOptions" class="w-[180px]"/>
 							</div>
 							<div class="row">
 								<div class="col-auto">

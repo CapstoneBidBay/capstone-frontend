@@ -1,57 +1,68 @@
 <script setup>
-import ListProduct from '@/components/page-sections/product-manager/Products.vue';
-const Products = [
-	{
-		id: 1,
-		title: 'Flared Shift Dress',
-		image: '/assets/img/product/product-1.jpg',
-		price: '$24',
-		starNumber: 4,
-		tag: 'T-shirt'
-	},
-	{
-		id: 3,
-		title: 'Flared Shift Dress',
-		image: '/assets/img/product/product-1.jpg',
-		price: '$24',
-		starNumber: 4,
-		tag: 'T-shirt'
-	},
-	{
-		id: 2,
-		title: 'Casual T-shirt',
-		image: 'https://static.nike.com/a/images/t_PDP_1280_v1/f_auto,q_auto:eco/9b26aa8f-0173-409b-b30a-7ce2d88573a4/custom-nike-dunk-low-by-you.png',
-		price: '$18',
-		starNumber: 5,
-		tag: 'NEWS-Brand'
+import SearchInput from '@/components/common-components/SearchInput.vue';
+import Tab1 from '@/components/manage-product/ProductStore.vue';
+import Tab2 from '@/components/manage-product/ProductAuction.vue';
+import Tab3 from '@/components/manage-product/ProductStore.vue';
+import Tab4 from '@/components/manage-product/ProductStore.vue';
+import { ref, markRaw } from 'vue'
 
-	},
-];
+const tab = ref(Tab1)
+
+function changeTab(comp) {
+	tab.value = markRaw(comp)
+}
 </script>
-
 <template>
-	<div id="tt-pageContent">
-		<div class="container-indent">
-			<div class="container container-fluid-mobile">
-				<div class="row">
-					<div class="col-12 col-lg-9">
-					   PROFILE HERE
-					</div>
-					<div class="col-12 col-lg-3">
-						<div class="tt-product-single-aside">
-							<div class="tt-services-aside">
-							   TOTAL NUMBER 
-							</div>
-						</div>
+	<div class="container mx-auto">
+		<div class="  rounded-lg bg-white p-10 shadow-lg">
+			<div class="mb-4 flex  items-center">
+				<SearchInput placeholder="       Search a product" addOnInputClass="w-full md:w-[950px]" />
+				<button class="ml-2 rounded-lg bg-blue-500 p-2 text-white hover:bg-blue-600">Tìm Kiếm</button>
+			</div>
+			<div class="flex">
+				<div class="space-y-5">
+					<div class="overflow-hidden rounded-xl border border-gray-100 bg-gray-50 p-1">
+						<ul class="flex items-center gap-2 text-sm font-medium">
+							<li class="flex-2">
+								<button @click="changeTab(Tab1)"
+									class="text-gra relative flex items-center justify-center gap-2 rounded-lg bg-white px-3 py-2 shadow hover:bg-white hover:text-gray-700">
+									Kho
+									<span class="rounded-full bg-gray-100 px-2 py-0.5 text-xs font-semibold text-gray-500"> 14 </span>
+								</button>
+							</li>
+							<li class="flex-2">
+								<button
+								@click="changeTab(Tab2)"
+									class="flex items-center justify-center gap-2 rounded-lg px-3 py-2 text-gray-500 hover:bg-white hover:text-gray-700 hover:shadow">
+									Đấu Giá
+								</button>
+							</li>
+							<li class="flex-2">
+								<button 
+									class="flex items-center justify-center gap-2 rounded-lg px-3 py-2 text-gray-500 hover:bg-white hover:text-gray-700 hover:shadow">
+									Đã Bán
+									<span class="rounded-full bg-gray-100 px-2 py-0.5 text-xs font-semibold text-gray-500"> 8 </span>
+								</button>
+							</li>
+							<li class="flex-2">
+								<a href="#"
+									class="flex items-center justify-center gap-2 rounded-lg px-3 py-2 text-gray-500 hover:bg-white hover:text-gray-700 hover:shadow">
+									Từ Chối</a>
+							</li>
+
+						</ul>
 					</div>
 				</div>
 			</div>
 		</div>
 
-
-		<div class="container-indent">
-			<Products :products="products" />
+		<div id="tt-pageContent">
+			<div class="container-indent">
+				<div class="bg-white my-3">
+					<component :is="tab" />
+				</div>
+			</div>
 		</div>
-
 	</div>
 </template>
+

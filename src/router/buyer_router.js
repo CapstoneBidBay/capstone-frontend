@@ -1,11 +1,11 @@
 import ENUM from '@/constants/enum.js'
 import ManagerAllPage from '@/views/buyer/ManagerAllPage.vue'
-import TestComponent from '@/views/TestComponent.vue'
 import ComingSoonPage from '@/views/common/ComingSoonPage.vue'
 import ProductDetailPage from '@/views/buyer/child-page/ProductDetailPage.vue'
 import WishListPage from '@/views/buyer/child-page/WishlistPage.vue'
 import ComparePage from '@/views/buyer/child-page/ComparePage.vue'
 import LandingPage from '@/views/buyer/child-page/LandingPage.vue'
+import AuctionListPage from '@/views/buyer/child-page/AuctionListPage.vue'
 const buyer_router = [
   {
     name: 'all-page-buyer',
@@ -13,12 +13,11 @@ const buyer_router = [
     component: ManagerAllPage,
     children: [
       {
-        name: 'test-page',
-        path: '/test-components',
-        component: TestComponent,
+        name: 'auction-list',
+        path: '/auctions',
+        component: AuctionListPage,
         meta: {
           requiresAuth: false,
-          roles: [ENUM.BUYER.ROLE_ID],
         },
       },
       {
@@ -78,4 +77,4 @@ const buyer_router = [
 ]
 
 export default buyer_router
-export const defaultBuyerRoute = "all-page-buyer"
+export const defaultBuyerRoute = 'all-page-buyer'

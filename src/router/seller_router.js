@@ -11,10 +11,11 @@ const seller_router = [
     component: ManagerAllPage,
     children: [
       {
-        name: 'product-manager',
-        path: '/product-manager',
+        name: 'manage-product',
+        path: '/manage',
         component: ProductManagerPage,
       },
+
       {
         name: 'profile',
         path: '/profile',
@@ -57,4 +58,4 @@ const seller_router = [
 ]
 
 export default seller_router
-export const defaultSellerRoute = "all-page-seller"
+export const defaultSellerRoute = 'all-page-seller'
