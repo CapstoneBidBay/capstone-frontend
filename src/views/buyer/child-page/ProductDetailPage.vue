@@ -1,145 +1,132 @@
 <script setup>
-
 import ListProductImage from '@/components/product-detail/ListProductImage.vue';
 import ProductInfo from '@/components/product-detail/ProductInfo.vue';
-import ProductCarousel from '@/components/product-detail/ProductCarousel.vue';
-import Table from '@/components/common-components/Table.vue';
-import CustomChart from '@/components/common-components/CustomChart.vue';
-const product = {
-	productImages: [
-		"https://static.nike.com/a/images/t_PDP_1280_v1/f_auto,q_auto:eco/9b26aa8f-0173-409b-b30a-7ce2d88573a4/custom-nike-dunk-low-by-you.png",
-		"https://static.nike.com/a/images/t_PDP_1280_v1/f_auto,q_auto:eco/9b26aa8f-0173-409b-b30a-7ce2d88573a4/custom-nike-dunk-low-by-you.png",
-		"https://static.nike.com/a/images/t_PDP_1280_v1/f_auto,q_auto:eco/9b26aa8f-0173-409b-b30a-7ce2d88573a4/custom-nike-dunk-low-by-you.png",
-		"https://static.nike.com/a/images/t_PDP_1280_v1/f_auto,q_auto:eco/9b26aa8f-0173-409b-b30a-7ce2d88573a4/custom-nike-dunk-low-by-you.png",
-	],
-	productInfo: {
-		sku: '001',
-		productTitle: 'Tên Sản Phẩm',
-		productPeopleJoin: '40',
-		productPrice: '90.000.000 VND',
-		productDescription: 'loreum ipsum dolor sit ametloreum ipsum dolor sit ametloreum ipsum dolor sit ametloreum ipsum dolor sit ametloreum ipsum dolor sit ametloreum ipsum dolor sit amet',
-		productRateStar: 3,
-		reviewNumber: '1',
-		vendor: 'Polo',
-		productType: 'T-Shirt',
-		tags: ['T-Shirt', 'Women', 'Top']
-	}
+import Breadcrumb from '@/layouts/Breadcrumb.vue';
+import AuctionHistoryBid from '@/components/product-detail/AuctionHistoryBid.vue';
+import ItemBox from '@/components/common-components/ItemBox.vue';
+import { useRoute, useRouter } from 'vue-router';
+import { onBeforeUnmount, onMounted, ref } from 'vue';
+import auctionService from '@/services/auction.service';
+import moment from 'moment';
+import toastOption from '@/utils/toast-option';
 
+const route = useRoute();
+const router = useRouter();
+
+const bidHistoryInfo = ref([])
+const numOfUsers = ref(0)
+const numOfBids = ref(0)
+
+let isFirstTime = true;
+let interval;
+
+const auction = ref(null)
+
+const breadcrumbItems = [
+	{
+		text: "Trang chủ",
+		to: "/",
+		disabled: false,
+	},
+	{
+		text: "Đấu giá",
+		to: "/auctions",
+		disabled: false,
+	},
+	{
+		text: "Áo ba lỗ",
+		to: "/product-detail",
+		disabled: true,
+	}
+]
+
+const fetchDetail = async () => {
+	const auctionDetailData = await auctionService.getAuctionDetail(route.params["id"])
+	const autionData = auction.value
+	auction.value = {...autionData, ... auctionDetailData.data, numOfUsers : numOfUsers.value }
+}
+const fetchBidHistory = async () => {
+	const response = await auctionService.getHistoryBid(route.params["id"])
+    const data = response.data
+    numOfUsers.value = data.bidders || 0
+    numOfBids.value = data.bids || 0
+
+    const newData = data.informationBidderDTOS ? data.informationBidderDTOS.map(d => {
+		const isExisted = bidHistoryInfo.value.filter(inf => inf.bidAmount === d.bidAmount && inf.idBidder === d.idBidder)
+		const isNew = !(isExisted && isExisted.length > 0)
+        return {
+            idBidder: d.idBidder,
+            bidAmount: d.bidAmount,
+            createAt: moment.utc(d.bidTime).format("DD/MM/YYYY HH:mm:ss"),
+            bidType: d.auctionType,
+			isNew: isFirstTime ? false : isNew,
+        }
+    }).sort((d1, d2) => {
+        return d2.bidAmount - d1.bidAmount
+    }) : []
+	bidHistoryInfo.value = [...newData]
+	if(bidHistoryInfo.value.length > 0){
+		const topBidderData = bidHistoryInfo.value[0]
+		const latestBidderInfo = {
+			identifier: topBidderData.idBidder,
+			createdAt: moment(topBidderData.bidTime).format("DD/MM/YYYY HH:mm:ss")
+		}
+		auction.value = {...auction.value, latestBidderInfo }
+	}
 }
 
+const fetchPageData = async () => {
+	await fetchBidHistory()
+	isFirstTime = false
+	fetchDetail()
+}
+const onBuyNowSuccess = () => {
+	toastOption.toastSuccess("Mua ngay thành công")
+	router.push("/bought")
+}
 
-const chartData = {
-    labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-    datasets: [{
-        label: '# of Votes',
-        data: [12, 19, 3, 5, 2, 3],
-        backgroundColor: 'rgba(75, 192, 192, 0.2)'
-    }]
-};
+onMounted(async () => {
+	fetchPageData()
+	interval = setInterval(() => {
+		console.log("interval call")
+		fetchBidHistory()
+	}, 10000)
+})
 
-const chartOptions = {
-    // ... your chart options here
-};
-
-
-const productCarousels = [
-	{
-		id: 1,
-		title: 'Flared Shift Dress',
-		image: '/assets/img/product/product-1.jpg',
-		price: '$24',
-		starNumber: 4,
-		tag: 'T-shirt'
-	},
-	{
-		id: 3,
-		title: 'Flared Shift Dress',
-		image: '/assets/img/product/product-1.jpg',
-		price: '$24',
-		starNumber: 4,
-		tag: 'T-shirt'
-	},
-	{
-		id: 2,
-		title: 'Casual T-shirt',
-		image: 'https://static.nike.com/a/images/t_PDP_1280_v1/f_auto,q_auto:eco/9b26aa8f-0173-409b-b30a-7ce2d88573a4/custom-nike-dunk-low-by-you.png',
-		price: '$18',
-		starNumber: 5,
-		tag: 'NEWS-Brand'
-
-	},
-];
+onBeforeUnmount(() => {
+	clearInterval(interval)
+})
 </script>
 
 <template>
-	<div id="tt-pageContent">
-		<div class="container-indent">
-			<div class="container container-fluid-mobile">
-				<div class="row">
-					<div class="col-12 col-lg-9">
-						<div class="row custom-single-page">
-							<div class="col-6 hidden-xs">
-								<ListProductImage :images="product.productImages" />
-							</div>
-							<div class="col-6">
-								<ProductInfo :productInfo="product.productInfo" />
-							</div>
-						</div>
+	<div class="p-4">
+		<div class="">
+			<Breadcrumb :items="breadcrumbItems" />
+			<div class="pt-3 w-full xl:flex gap-3">
+				<div class="flex items-start w-full xl:w-[80%] rounded-md pt-2 !bg-white">
+					<div class="hidden-xs w-[100%] px-2 pt-16">
+						<ListProductImage :images="auction?.product?.imageUrls" />
 					</div>
-					<div class="col-12 col-lg-3">
-						<div class="tt-product-single-aside">
-							<div class="tt-services-aside">
-								<a href="#" class="tt-services-block">
-									<div class="tt-col-icon">
-										<i class="icon-f-48"></i>
-									</div>
-									<div class="tt-col-description">
-										<h4 class="tt-title">FREE SHIPPING</h4>
-										<p>Miễn phí shipping với mặt hàng có giá trị từ 2.000.000 VND trở lên</p>
-									</div>
-								</a>
-								<a href="#" class="tt-services-block">
-									<div class="tt-col-icon">
-										<i class="icon-f-35"></i>
-									</div>
-									<div class="tt-col-description">
-										<h4 class="tt-title">SUPPORT 24/7</h4>
-										<p>Hỗ trợ chăm sóc khách hàng 24 tiếng / ngày , 7 ngày / tuần</p>
-									</div>
-								</a>
-								<a href="#" class="tt-services-block">
-									<div class="tt-col-icon">
-										<i class="icon-e-09"></i>
-									</div>
-									<div class="tt-col-description">
-										<h4 class="tt-title">30 DAYS RETURN</h4>
-										<p>30 Ngày hoàn trả nếu sản phẩm đấu giá không đúng với chính sách hoàn trả của chúng tôi.</p>
-									</div>
-								</a>
-							</div>
-
-						</div>
+					<div class="pl-5 border-l-[1px]">
+						<ProductInfo :auction-info="auction" @place-bid-success="fetchPageData()" @buy-now-success="onBuyNowSuccess()"/>
 					</div>
-
 				</div>
-				<div class="row">
-					<div class="col-12 col-lg-6">
-							 <!-- CHART HERE  -->
-							 <CustomChart :data="chartData" :options="chartOptions"></CustomChart>
-					</div>
-					<div class="col-12 col-lg-6">
-								<!-- TABLE HERE  -->
-								 <Table />
-					</div>
-
+				<div class="flex items-start rounded-md !bg-white xl:mt-0 w-full xl:w-[50%]">
+					<AuctionHistoryBid :auctionHistory="bidHistoryInfo" :numOfUsers="numOfUsers" :numOfBids="numOfBids" />
+				</div>
+			</div>
+			<div class="text-xl mt-8">SẢN PHẨM KHÁC</div>
+			<div class="mt-3 bg-white py-2 rounded-lg">
+				<div class="flex gap-9 justify-around container mx-auto">
+					<ItemBox product-name="Super long long long long name long long long long" item-id="1" :time-remain="999999" />
+					<ItemBox product-name="Super long long long" item-id="1" :time-remain="999999"/>
+					<ItemBox product-name="Super long long long" item-id="1" :time-remain="999999"/>
+					<ItemBox product-name="Super long long long" item-id="1" :time-remain="999999"/>
+					<ItemBox product-name="Super long long long" item-id="1" :time-remain="999999"/>
+					<ItemBox product-name="Super long long long" item-id="1" :time-remain="999999"/>
+					<ItemBox product-name="Super long long long" item-id="1" :time-remain="999999"/>
 				</div>
 			</div>
 		</div>
-
-
-		<div class="container-indent">
-			<ProductCarousel :products="productCarousels" />
-		</div>
-
 	</div>
 </template>

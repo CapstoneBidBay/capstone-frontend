@@ -5,6 +5,10 @@ import { onMounted, ref } from 'vue';
 import { Icon } from '@iconify/vue';
 import Slider from '@vueform/slider'
 import currencyFormat from '@/utils/currency-formatter.js'
+import brandService from '@/services/brand.service';
+import categoryService from '@/services/category.service';
+import auctionService from '@/services/auction.service';
+import imageHelper from '@/utils/image-helper';
 
 const orderOptions = ref([
     {
@@ -41,14 +45,47 @@ const isBrandTabOpen = ref(false)
 const isCategoryTabOpen = ref(false)
 const isPriceTabOpen = ref(false)
 
-onMounted(() => {
-    console.log('Firebase cloud messaging object', this.$messaging)
+const brandOptions = ref([])
+const categoryOptions = ref([])
+
+const auctions = ref([])
+
+const fetchBrandsData = async () => {
+    const brands = await brandService.getAllBrands()
+    brandOptions.value = brands.data.map(d => {
+        return {
+            label: d.name,
+            value: d.id,
+            isSelected: false,
+        }
+    })
+}
+const fetchCategoriesData = async () => {
+    const categories = await categoryService.getAllCategories()
+    
+    categoryOptions.value = await categories.data.map(d => {
+        return {
+            label: d.name,
+            value: d.id,
+            isSelected: false,
+        }
+    })
+}
+const fetchAuctions = async () => {
+    const auctionsData = await auctionService.getAllActiveAuctions()
+    auctions.value = auctionsData.data
+}
+
+onMounted(async () => {
+    fetchBrandsData()
+    fetchCategoriesData()
+    fetchAuctions()
 })
 
 </script>
 <template>
     <div class="w-full">
-        <div class="container bg-white mt-3 rounded-md px-5 pt-1 overflow-auto">
+        <div class="container mx-auto bg-white mt-3 rounded-md px-5 pt-1 overflow-auto">
             <div class="flex items-center justify-between">
                 <p class="text-3xl font-bold text-black">Sản phẩm</p>
                 <div class="flex items-center gap-3">
@@ -70,41 +107,11 @@ onMounted(() => {
                         </div>
                         <div
                             :class="`transition-all duration-500 ${isBrandTabOpen ? 'h-[10rem] opacity-1 p-2' : 'h-0 opacity-0 overflow-hidden'}`">
-                            <div class="flex items-center mb-1">
-                                <input id="brand1" type="checkbox" value="brand1"
+                            <div v-for="brand in brandOptions" :key="brand.id"  class="flex items-center mb-1">
+                                <input :id="brand.id" type="checkbox" :value="brand.value" v-model="brand.isSelected"
                                     class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
                                 <label for="default-checkbox"
-                                    class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">JUNO</label>
-                            </div>
-                            <div class="flex items-center mb-1">
-                                <input id="brand1" type="checkbox" value="brand1"
-                                    class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
-                                <label for="default-checkbox"
-                                    class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">OWEN</label>
-                            </div>
-                            <div class="flex items-center mb-1">
-                                <input id="brand1" type="checkbox" value="brand1"
-                                    class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
-                                <label for="default-checkbox"
-                                    class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">BLUE EXCHANGE</label>
-                            </div>
-                            <div class="flex items-center mb-1">
-                                <input id="brand1" type="checkbox" value="brand1"
-                                    class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
-                                <label for="default-checkbox"
-                                    class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">GUCCI</label>
-                            </div>
-                            <div class="flex items-center mb-1">
-                                <input id="brand1" type="checkbox" value="brand1"
-                                    class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
-                                <label for="default-checkbox"
-                                    class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">VIỆT TIẾN</label>
-                            </div>
-                            <div class="flex items-center">
-                                <input id="brand1" type="checkbox" value="brand1"
-                                    class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
-                                <label for="default-checkbox"
-                                    class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">UNIQLO</label>
+                                    class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">{{ brand.label }}</label>
                             </div>
                         </div>
                     </div>
@@ -131,54 +138,27 @@ onMounted(() => {
                         </div>
                         <div
                             :class="`transition-all duration-500 ${isCategoryTabOpen ? 'h-[10rem] opacity-1 p-2' : 'h-0 opacity-0 overflow-hidden'}`">
-                            <div class="flex items-center mb-1">
-                                <input id="brand1" type="checkbox" value="brand1"
+                            <div v-for="cate in categoryOptions" :key="cate.id"  class="flex items-center mb-1">
+                                <input :id="cate.id" type="checkbox" :value="cate.value" v-model="cate.isSelected"
                                     class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
                                 <label for="default-checkbox"
-                                    class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Áo</label>
-                            </div>
-                            <div class="flex items-center mb-1">
-                                <input id="brand1" type="checkbox" value="brand1"
-                                    class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
-                                <label for="default-checkbox"
-                                    class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Quần</label>
-                            </div>
-                            <div class="flex items-center mb-1">
-                                <input id="brand1" type="checkbox" value="brand1"
-                                    class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
-                                <label for="default-checkbox"
-                                    class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Phụ kiện</label>
-                            </div>
-                            <div class="flex items-center mb-1">
-                                <input id="brand1" type="checkbox" value="brand1"
-                                    class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
-                                <label for="default-checkbox"
-                                    class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Giày dép</label>
+                                    class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">{{ cate.label }}</label>
                             </div>
                         </div>
                     </div>
+                    <div class="p-2 mt-8 ml-4 bg-blue-600 text-md text-white rounded-lg w-[100px] text-center" @click="onFilter()">Lọc</div>
                 </div>
                 <!-- Auction section -->
-                <div class="w-[80%]">
-                <div class="flex justify-around mb-3">
-                    <ItemBox product-name="Super long long long long name long long long long" />
-                    <ItemBox product-name="Super long long long" />
-                    <ItemBox product-name="Super long long long" />
-                </div>
-                <div class="flex justify-around mb-3">
-                    <ItemBox product-name="Super long long long long name long long long long" />
-                    <ItemBox product-name="Super long long long" />
-                    <ItemBox product-name="Super long long long" />
-                </div>
-                <div class="flex justify-around mb-3">
-                    <ItemBox product-name="Super long long long long name long long long long" />
-                    <ItemBox product-name="Super long long long" />
-                    <ItemBox product-name="Super long long long" />
-                </div>
-                <div class="flex justify-around">
-                    <ItemBox product-name="Super long long long long name long long long long" />
-                    <ItemBox product-name="Super long long long" />
-                    <ItemBox product-name="Super long long long" />
+                <div class="w-[75%]">
+                <div class="flex flex-wrap gap-8">
+                    <ItemBox v-for="auction in auctions" :key="auction.id"
+                        :product-name="auction.product.name"
+                        :main-image="imageHelper.getPrimaryImageFromList(auction.product.imageUrls)"
+                        :secondary-image="imageHelper.getSecondaryImageFromList(auction.product.imageUrls)"
+                        :floor-price="auction.highestPrice ? auction.highestPrice : auction.startPrice"
+                        :time-remain="auction.timeLeft"
+                        :item-id="auction.id"
+                        />
                 </div>
             </div>
         </div>
