@@ -1,67 +1,49 @@
-<template>
-  <div class="container my-[20px] py-2 mx-auto">
-    <div class="mb-4 flex items-center mr-5 ml-5 mt-10">
-      <select class="w-[200px] border h-11 rounded  text-gray-700 focus:outline-none focus:shadow-outline mr-1">
-        <option value=""  selected>Tất Cả</option>
-        <option value="brand1">Đã Bán</option>
-        <option value="brand2">Chưa Đấu Giá</option>
-        <option value="brand3">Đang Đấu Giá</option>
-      </select>
-      <div class="w-full">
-        <SearchInput placeholder="       Search a product" addOnInputClass="w-full" />
-      </div>
-    </div>
-    <div class="flex flex-wrap items-center mt-10">
-      <div @click="showCreate()" @click.prevent
-        class="group tt-product thumbprod-center rounded-xl hover:scale-105 duration-200 ml-10 mb-10">
-        <div
-          class="group bg-gray-900/30 py-28 px-20 flex flex-col space-y-4 items-center cursor-pointer rounded-md hover:bg-gray-900/40 hover:smooth-hover">
-          <a class="bg-gray-900/70 text-white/50 group-hover:text-white group-hover:smooth-hover flex w-20 h-20 rounded-full items-center justify-center"
-            href="#">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24"
-              stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-            </svg>
-          </a>
-          <button class="text-white/50 group-hover:text-white group-hover:smooth-hover text-center">TẠO MỚI</button>
-        </div>
-      </div>
-      <ItemBoxManageVue 
-        v-for="product in products" :key="product.id"
-        @click="showDetail(product)"
-        class="ml-10 mb-10"
-        :product-name="product.name"
-        :status="product.status"
-        :mainImage="product.imageUrls && product.imageUrls.length > 0 ? product.imageUrls[0] : noImage"
-        :secondaryImage="product.imageUrls && product.imageUrls.length > 1 ? product.imageUrls[1] : product.imageUrls && product.imageUrls.length > 0 ? product.imageUrls[0] : noImage"
-        />
-    </div>
-  </div>
-
-  <div>
-    <Modal :hidden="!isModalVisible" :widthClass="'w-[900px]'" :hasOverFlowVertical=true :hasButton=false
-      :title="typeofModal === allowedModalTypes.info ? 'Thông tin' : 'Tạo mới'"
-      @decline-modal="closeModal" @confirm-modal="handleConfirm">
-      <div :hidden="!(typeofModal === allowedModalTypes.info)">
-        <ProductInfoModal :product="productDetail" @send-success="onSendSuccess" @send-error="onSendError" @just-submitted="closeModal"/>
-      </div>
-      <div :hidden="!(typeofModal === allowedModalTypes.create)">
-        <CreateNewProduct @create-success="onCreateSuccess" @create-error="onCreateError" @just-submitted="closeModal"/>
-      </div>
-    </Modal>
-  </div>
-</template>
 <script setup>
 import CreateNewProduct from '@/components/manage-product/CreateNewProduct.vue';
 import ProductInfoModal from '@/components/manage-product/ProductInfoModal.vue';
-import ItemBoxManageVue from '@/components/common-components/ItemBoxManage.vue';
+import ItemBoxManageVue from '@/components/common-components/item-box/ItemBoxManage.vue';
 import Modal from '@/components/common-components/Modal.vue';
 import SearchInput from '@/components/common-components/SearchInput.vue';
 import productSerivice from '@/services/product.service';
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import toastOption from '../../utils/toast-option';
 import { noImage } from '../../common/urlConstant';
 import { useUserStore } from '@/stores/user.store';
+import { ProductStatus } from '@/common/contract';
+import Dropdown from '../common-components/Dropdown.vue';
+import imageHelper from '@/utils/image-helper';
+import Loading from '../common-components/Loading.vue';
+
+const isLoading = ref(false)
+
+const options = ref([])
+const filterOptions = () => {
+  const arr = [
+    {
+      label: "TẤT CẢ",
+      value: ""
+    }
+  ]
+  for(const props in ProductStatus){
+    arr.push(ProductStatus[props])
+  }
+  return arr;
+}
+const selected = ref({
+  label: "TẤT CẢ",
+  value: ""
+})
+watch(selected, (newVal) => {
+  filterProduct();
+})
+
+const filterProduct = () => {
+  if(!selected.value.value){
+    products.value = JSON.parse(JSON.stringify(productsOrigin.value))
+    return
+  }
+  products.value = productsOrigin.value.filter(p => p.status === selected.value.value)
+}
 
 const userStore = useUserStore();
 
@@ -70,6 +52,7 @@ const isModalVisible = ref(false);
 const typeofModal = ref('info');
 
 const products = ref([]);
+const productsOrigin = ref([]);
 const productDetail = ref(null);
 
 const onCreateSuccess = (toastId) => {
@@ -104,7 +87,8 @@ const showDetail = (product) => {
 }
 
 const showCreate = async () => {
-  if(userStore.getIsVerifyCCCDAndGetFromLocalStorageIfNotExist() !== "true"){
+  const isVerified = userStore.getIsVerifyCCCDAndGetFromLocalStorageIfNotExist()
+  if(isVerified.toString() !== "true"){
     toastOption.toastError("Bạn phải cập nhật căn cước công dân trước khi đăng sản phẩm")
     return
   }
@@ -121,12 +105,67 @@ function handleConfirm() {
 }
 
 const fetchProducts = async () => {
+  isLoading.value = true
   const data = await productSerivice.getProducts();
-  products.value = data.data;
+  productsOrigin.value = data.data.sort((a, b) => {
+    return new Date(b.createAt).getTime() - new Date(a.createAt).getTime()
+  });
+  filterProduct()
+  isLoading.value = false
 }
 
 onMounted(async () => {
+  options.value = filterOptions()
   await fetchProducts();
 })
 
 </script>
+<template>
+  <div class="container my-[20px] py-2 mx-auto bg-white rounded-md">
+    <div class="mb-4 flex items-center mr-5 ml-5 mt-10">
+      <Dropdown v-model="selected" :data="options" class="!w-[200px]"/>
+      <div class="w-full ml-2">
+        <SearchInput placeholder="       Search a product" addOnInputClass="w-full" />
+      </div>
+    </div>
+    <Loading v-if="isLoading" />
+    <div v-else class="flex flex-wrap items-center mt-10">
+      <div @click="showCreate()" @click.prevent
+        class="group tt-product thumbprod-center rounded-xl hover:scale-105 duration-200 ml-10 mb-10">
+        <div
+          class="group bg-gray-900/30 py-[5.2rem] px-20 flex flex-col space-y-4 items-center cursor-pointer rounded-md hover:bg-gray-900/40 hover:smooth-hover">
+          <a class="bg-gray-900/70 text-white/50 group-hover:text-white group-hover:smooth-hover flex w-20 h-20 rounded-full items-center justify-center"
+            href="#">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+            </svg>
+          </a>
+          <button class="text-white font-semibold text-lg group-hover:text-white group-hover:smooth-hover text-center">TẠO MỚI</button>
+        </div>
+      </div>
+      <ItemBoxManageVue 
+        v-for="product in products" :key="product.id"
+        @click="showDetail(product)"
+        class="ml-10 mb-10"
+        :product-name="product.name"
+        :status="product.status"
+        :mainImage="imageHelper.getPrimaryImageFromList(product.imageUrls)"
+        :secondaryImage="imageHelper.getSecondaryImageFromList(product.imageUrls)"
+        />
+    </div>
+  </div>
+
+  <div>
+    <Modal :hidden="!isModalVisible" :widthClass="'w-[900px]'" :hasOverFlowVertical=true :hasButton=false
+      :title="typeofModal === allowedModalTypes.info ? 'Thông tin' : 'Tạo mới'"
+      @decline-modal="closeModal" @confirm-modal="handleConfirm">
+      <div :hidden="!(typeofModal === allowedModalTypes.info)">
+        <ProductInfoModal :product="productDetail" @send-success="onSendSuccess" @send-error="onSendError" @just-submitted="closeModal"/>
+      </div>
+      <div :hidden="!(typeofModal === allowedModalTypes.create)">
+        <CreateNewProduct @create-success="onCreateSuccess" @create-error="onCreateError" @just-submitted="closeModal"/>
+      </div>
+    </Modal>
+  </div>
+</template>

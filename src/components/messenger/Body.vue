@@ -6,8 +6,8 @@
     <div class="flex flex-col h-full overflow-x-auto mb-4">
       <div class="flex flex-col h-full">
         <div class="grid grid-cols-12 gap-y-2">
-          <MessageBubble isSender="true" sender="Sender" message="Hello there!"/>
-          <MessageBubble isSender="false" sender="Receiver" message="Hi! How are you?"/>
+          <MessageBubble :isSender="true" sender="Sender" message="Hello there!"/>
+          <MessageBubble :isSender="false" sender="Receiver" message="Hi! How are you?"/>
         </div>
       </div>
     </div>
@@ -24,7 +24,6 @@
       <div class="flex-grow ml-4">
         <div class="relative w-full">
           <input type="text" class="flex w-full border rounded-xl focus:outline-none focus:border-indigo-300 pl-4 h-10" />
-         
         </div>
       </div>
       <div class="ml-4">

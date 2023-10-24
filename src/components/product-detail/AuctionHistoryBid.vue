@@ -1,7 +1,7 @@
 <script setup>
-import formatCurrency from '@/utils/currency-formatter';
+import formatCurrency from '@/utils/currency-output-formatter';
 import { onMounted, ref } from 'vue';
-import BidTypeBadge from '../common-components/BidTypeBadge.vue';
+import BidTypeBadge from '../common-components/badge/BidTypeBadge.vue';
 
 const props = defineProps(['auctionHistory', 'numOfUsers', 'numOfBids'])
 const isChangeColor = ref(false)
@@ -50,4 +50,4 @@ onMounted(() => {
             </table>
         </div>
     </div>
-</template>
+</template>@/utils/currency-output-formatter

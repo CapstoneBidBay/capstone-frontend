@@ -1,11 +1,13 @@
 import ManagerAllPage from '@/views/seller/ManagerAllPage.vue'
 import ComingSoonPage from '@/views/common/ComingSoonPage.vue'
-import ProductManagerPage from '@/views/seller/child-page/ManageProductPage.vue'
 import CreateAccountPage from '@/views/common/CreateAccountPage.vue'
 import ProfilePage from '@/views/common/ProfilePage.vue'
-import CCCD from '@/components/page-sections/UploadCCCD.vue'
 import ProductStore from '@/components/manage-product/ProductStore.vue'
+import ProductAuction from '@/components/manage-product/ProductAuction.vue'
+import ProductSell from '@/components/manage-product/ProductSell.vue'
+import ProductReject from '@/components/manage-product/ProductReject.vue'
 import Messenger from '@/views/common/Messenger.vue'
+import ProductInOrder from '@/components/manage-product/ProductInOrder.vue'
 const seller_router = [
   {
     name: 'all-page-seller',
@@ -13,14 +15,29 @@ const seller_router = [
     component: ManagerAllPage,
     children: [
       {
-        name: 'manage-product',
-        path: '/manage',
-        component: ProductManagerPage,
-      },
-      {
         name: 'product-store',
         path: '/manage/product-inventory',
         component: ProductStore
+      },
+      {
+        name: 'product-on-stock',
+        path: '/manage/on-selling',
+        component: ProductAuction
+      },
+      {
+        name: 'product-sold',
+        path: '/manage/product-sold',
+        component: ProductSell
+      },
+      {
+        name: 'product-rejected',
+        path: '/manage/product-rejected',
+        component: ProductReject
+      },
+      {
+        name: 'product-in-order',
+        path: '/manage/orders',
+        component: ProductInOrder
       },
       {
         name: 'profile',
@@ -31,28 +48,22 @@ const seller_router = [
         },
       },
       {
-        name: 'cccd',
-        path: '/cccd',
-        component: CCCD,
-      },
-      {
         name: 'sign-up',
         path: '/register',
         component: CreateAccountPage,
         meta: {
           requiresAuth: false,
         },
-      },  
-       {
-        name: 'messenger',
-        path: '/messenger',
-        component: Messenger,
-        meta: {
-          requiresAuth: false,
-        },
-      },  
-    
+      },
     ],
+  },
+  {
+    name: 'messenger',
+    path: '/messenger',
+    component: Messenger,
+    meta: {
+      requiresAuth: false,
+    },
   },
   {
     name: 'not-found',

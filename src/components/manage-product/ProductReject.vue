@@ -1,7 +1,7 @@
 <script setup>
 import Modal from '@/components/common-components/Modal.vue'
 import Button from '@/components/common-components/Button.vue'
-import productSerivice from '@/services/product.service'
+import ProductSerivice from '@/services/product.service'
 import { onMounted, ref, computed, watch } from 'vue'
 import ProductInfoModal from '@/components/manage-product/ProductInfoModal.vue'
 const allowedModalTypes = { info: 'info' }
@@ -28,13 +28,11 @@ const brands = ref([])
 const fetchProducts = async () => {
   try {
     const userID = localStorage.getItem('userId')
-    // console.log(userID)
     const response = await adminService.getAllAuctions(1, 100)
     products.value = response.data
     products.value = products.value.filter(
       auction => auction?.status === 'REJECTED' && auction?.product?.seller?.id === userID,
     )
-    console.log(products.value)
   } catch (e) {
     console.error(e)
   }
@@ -131,33 +129,42 @@ const formData = ref({
 // const showFormTab = () => {
 //   currentTab.value = 'form';
 // };
-const productFormData = ref({
-  name: '',
-  description: '',
-  weight: '',
-  brandId: '',
-  categoryId: '',
-})
+
 const onSubmit = () => {
   const durationValue = duration.value?.value ? duration.value.value : durationInput.value
-  console.log(selectedProduct?.value?.duration)
-  console.log(durationValue)
-  // const durationValue = duration.value?.value ? duration.value.value : durationInput.value
-  // const data = {
-  //   startPrice: formData.value.startPrice || 0,
-  //   jump: formData.value.jump,
-  //   buyNowPrice: formData.value.buyNowPrice || 0,
-  //   modelType: formData.value.modelType,
-  //   hoursOfDuration: durationValue,
-  // }
-
-  // AuctionService.sendAuctionRequest(selectedProduct.value?.product?.id, data)
-  //   .then(_ => {
-  //     emit('sendSuccess')
-  //   })
-  //   .catch(error => {
-  //     emit('sendError')
-  //   })
+  const dataAuction = {
+    startPrice: selectedProduct?.value.startPrice || 0,
+    jump: selectedProduct?.value.jump,
+    buyNowPrice: selectedProduct?.value.buyNowPrice || 0,
+    modelType: selectedProduct?.value.modelType,
+    hoursOfDuration: durationValue,
+  }
+  const dataProduct = {
+    updateProductRequest: {
+      name: selectedProduct?.value?.product?.name, // Replace with the desired name
+      description: selectedProduct?.value?.product?.description, // Replace with the desired description
+      weight: selectedProduct?.value?.product?.weight, // Replace with the desired weight
+      brandId: selectedProduct?.value?.product?.brand?.id,
+      statusProduct: 'APPROVING', // Replace with the desired status
+      categoryId: selectedProduct?.value?.product?.category?.id,
+    },
+    oldImagesRemoved: [''], // Replace with actual image paths
+    newImages: [...selectedProduct?.value?.product?.imageUrls], // Replace with actual image paths
+  }
+  ProductSerivice.updateProductById(selectedProduct.value?.product?.id, dataProduct)
+    .then(_ => {
+      emit('sendSuccess')
+      AuctionService.sendAuctionRequest(selectedProduct.value?.product?.id, dataAuction)
+        .then(_ => {
+          emit('sendSuccess')
+        })
+        .catch(error => {
+          emit('sendError')
+        })
+    })
+    .catch(error => {
+      emit('sendError')
+    })
 }
 
 onMounted(() => {
@@ -224,7 +231,6 @@ const showProductModal = ref(false)
 const selectedProduct = ref(null)
 const openProductModal = product => {
   selectedProduct.value = product // Set the selected brand data
-  // console.log(selectedbrand.value)
   showProductModal.value = true // Show the modal
 }
 const tabButtonClasses = tabName => ({
@@ -233,7 +239,7 @@ const tabButtonClasses = tabName => ({
 })
 </script>
 <template>
-  <div class="mx-auto container align-middle">
+  <div class="mx-auto container bg-white mt-2 align-middle pt-8 px-2 min-h-[50vh]">
     <table class="w-full table-auto text-sm">
       <thead>
         <tr class="text-sm leading-normal">
@@ -275,71 +281,72 @@ const tabButtonClasses = tabName => ({
         </tr>
       </tbody>
     </table>
+    <nav
+      class="flex flex-col md:flex-row justify-between items-start md:items-center space-y-3 md:space-y-0 p-4"
+      aria-label="Table navigation">
+      <ul class="inline-flex items-stretch -space-x-px">
+        <li>
+          <button
+            type="button"
+            class="flex items-center justify-center h-full py-1.5 px-3 ml-0 text-gray-500 bg-white rounded-l-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+            @click="goToPreviousPage"
+            :disabled="currentPage === 1"
+            aria-label="Previous Page">
+            <span class="sr-only">Previous</span>
+            <svg
+              class="w-5 h-5"
+              aria-hidden="true"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+              xmlns="http://www.w3.org/2000/svg">
+              <path
+                fill-rule="evenodd"
+                d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+                clip-rule="evenodd" />
+            </svg>
+          </button>
+        </li>
+        <!-- Generate pagination links -->
+        <li v-for="pageNumber in totalPages" :key="pageNumber">
+          <button
+            type="button"
+            class="flex items-center justify-center text-sm py-2 px-3 leading-tight"
+            :class="{
+              'text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white':
+                pageNumber !== currentPage,
+              'text-primary-600 bg-primary-50 border border-primary-300 hover:bg-primary-100 hover:text-primary-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white':
+                pageNumber === currentPage,
+            }"
+            @click="goToPage(pageNumber)"
+            aria-label="Page {{ pageNumber }}">
+            {{ pageNumber }}
+          </button>
+        </li>
+        <li>
+          <button
+            type="button"
+            @click="goToNextPage"
+            class="flex items-center justify-center h-full py-1.5 px-3 leading-tight text-gray-500 bg-white rounded-r-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+            :disabled="currentPage === totalPages"
+            aria-label="Next Page">
+            <span class="sr-only">Next</span>
+            <svg
+              class="w-5 h-5"
+              aria-hidden="true"
+              fill="currentColor"
+              viewbox="0 0 20 20"
+              xmlns="http://www.w3.org/2000/svg">
+              <path
+                fill-rule="evenodd"
+                d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                clip-rule="evenodd" />
+            </svg>
+          </button>
+        </li>
+      </ul>
+    </nav>
   </div>
-  <nav
-    class="flex flex-col md:flex-row justify-between items-start md:items-center space-y-3 md:space-y-0 p-4"
-    aria-label="Table navigation">
-    <ul class="inline-flex items-stretch -space-x-px">
-      <li>
-        <button
-          type="button"
-          class="flex items-center justify-center h-full py-1.5 px-3 ml-0 text-gray-500 bg-white rounded-l-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-          @click="goToPreviousPage"
-          :disabled="currentPage === 1"
-          aria-label="Previous Page">
-          <span class="sr-only">Previous</span>
-          <svg
-            class="w-5 h-5"
-            aria-hidden="true"
-            fill="currentColor"
-            viewBox="0 0 20 20"
-            xmlns="http://www.w3.org/2000/svg">
-            <path
-              fill-rule="evenodd"
-              d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
-              clip-rule="evenodd" />
-          </svg>
-        </button>
-      </li>
-      <!-- Generate pagination links -->
-      <li v-for="pageNumber in totalPages" :key="pageNumber">
-        <button
-          type="button"
-          class="flex items-center justify-center text-sm py-2 px-3 leading-tight"
-          :class="{
-            'text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white':
-              pageNumber !== currentPage,
-            'text-primary-600 bg-primary-50 border border-primary-300 hover:bg-primary-100 hover:text-primary-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white':
-              pageNumber === currentPage,
-          }"
-          @click="goToPage(pageNumber)"
-          aria-label="Page {{ pageNumber }}">
-          {{ pageNumber }}
-        </button>
-      </li>
-      <li>
-        <button
-          type="button"
-          @click="goToNextPage"
-          class="flex items-center justify-center h-full py-1.5 px-3 leading-tight text-gray-500 bg-white rounded-r-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-          :disabled="currentPage === totalPages"
-          aria-label="Next Page">
-          <span class="sr-only">Next</span>
-          <svg
-            class="w-5 h-5"
-            aria-hidden="true"
-            fill="currentColor"
-            viewbox="0 0 20 20"
-            xmlns="http://www.w3.org/2000/svg">
-            <path
-              fill-rule="evenodd"
-              d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-              clip-rule="evenodd" />
-          </svg>
-        </button>
-      </li>
-    </ul>
-  </nav>
+
   <div>
     <Modal
       v-if="showProductModal"
@@ -450,8 +457,10 @@ const tabButtonClasses = tabName => ({
                 <div v-for="src in selectedProduct.product.imageUrls" :key="src" class="inline-block mr-2">
                   <img :src="src" alt="product image" class="w-40 h-40 border-4 border-blue-500" />
                 </div>
-                <div v-for="src in imgSrc" :key="src" class="inline-block mr-2" v-if="imgSrc.length > 0">
-                  <img :src="src" alt="product image" class="w-40 h-40 border-4 border-blue-500" />
+                <div v-if="imgSrc.length > 0">
+                  <div v-for="src in imgSrc" :key="src" class="inline-block mr-2">
+                    <img :src="src" alt="product image" class="w-40 h-40 border-4 border-blue-500" />
+                  </div>
                 </div>
               </div>
               <div class="mb-4">

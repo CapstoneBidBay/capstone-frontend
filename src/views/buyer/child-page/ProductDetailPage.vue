@@ -3,7 +3,7 @@ import ListProductImage from '@/components/product-detail/ListProductImage.vue';
 import ProductInfo from '@/components/product-detail/ProductInfo.vue';
 import Breadcrumb from '@/layouts/Breadcrumb.vue';
 import AuctionHistoryBid from '@/components/product-detail/AuctionHistoryBid.vue';
-import ItemBox from '@/components/common-components/ItemBox.vue';
+import ItemBox from '@/components/common-components/item-box/ItemBox.vue';
 import { useRoute, useRouter } from 'vue-router';
 import { onBeforeUnmount, onMounted, ref } from 'vue';
 import auctionService from '@/services/auction.service';
@@ -96,7 +96,6 @@ onMounted(async () => {
 
 	// NEED TO REPLACE SET INTERVAL WITH FIREBASE MESSAGE TRIGGER!!!!!
 	interval = setInterval(() => {
-		console.log("interval call")
 		fetchBidHistory()
 	}, 10000)
 })
@@ -119,7 +118,7 @@ onBeforeUnmount(() => {
 						<ProductInfo :auction-info="auction" @place-bid-success="fetchPageData()" @buy-now-success="onBuyNowSuccess()"/>
 					</div>
 				</div>
-				<div class="flex items-start rounded-md !bg-white xl:mt-0 w-full xl:w-[50%]">
+				<div class="flex items-start rounded-md !bg-white xl:mt-0 mt-2 w-full xl:w-[50%]">
 					<AuctionHistoryBid :auctionHistory="bidHistoryInfo" :numOfUsers="numOfUsers" :numOfBids="numOfBids" />
 				</div>
 			</div>
