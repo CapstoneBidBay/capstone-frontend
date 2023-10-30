@@ -6,6 +6,7 @@ import { initFlowbite } from 'flowbite'
 import adminService from '../../services/admin.service'
 import '@vuepic/vue-datepicker/dist/main.css'
 import toastOption from '@/utils/toast-option'
+import moment from 'moment'
 
 const autionsList = ref([])
 const itemsPerPage = 4
@@ -143,7 +144,7 @@ const paginatedAuctions = computed(() => {
                 <td class="px-4 py-3" style="white-space: pre-line; word-wrap: break-word">
                   {{ auction?.modelType === 'IMMEDIATE' ? 'Tự trao đổi mua bán' : 'Trung gian qua hệ thống' }}
                 </td>
-                <td class="px-4 py-3">{{ new Date(auction?.product?.createAt).toLocaleString() }}</td>
+                <td class="px-4 py-3">{{ auction?.product?.createAt ? moment.utc(auction?.product?.createAt).format("DD/MM/YYYY HH:mm:ss") : ''}}</td>
                 <td class="px-4 py-3 flex items-center justify-end">
                   <button
                     class="inline-flex items-center p-0.5 text-sm font-medium text-center text-gray-500 hover:text-gray-800 rounded-lg focus:outline-none dark:text-gray-400 dark:hover:text-gray-100"
@@ -268,10 +269,6 @@ const paginatedAuctions = computed(() => {
         <!-- Modal body -->
         <div class="max-h-[600px] overflow-y-auto mt-2">
           <form action="#">
-            <div>
-              <Carousel :pictures="convertedImages"></Carousel>
-            </div>
-
             <div class="grid mt-2 gap-4 mb-4 sm:grid-cols-2">
               <div>
                 <label for="name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
@@ -360,7 +357,9 @@ const paginatedAuctions = computed(() => {
                 id="description"
                 class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"></textarea>
             </div>
-
+            <div class="mt-2">
+              <Carousel :pictures="convertedImages"></Carousel>
+            </div>
             <div class="flex items-center mt-2 space-x-4">
               <button
                 @click="handleApproveAuction(selectedAution.id)"
