@@ -70,9 +70,11 @@ export default {
       buyNow: 'auctions/{auctionId}/direct-purchase-auction',
     },
     guest: {
-      auctions: 'guest/auctions',
-      auctionDetail: 'guest/{id}/auction-detail',
-      auctionHistory: 'guest/auction/{auctionId}',
+      auctions: 'guest/auctions-guest',
+      auctionDetail: 'guest/{id}/auction-detail-guest',
+      auctionHistory: 'guest/auction-guest/{auctionId}',
+      categories: 'guest/categories-guest',
+      brands: 'guest/brands-guest'
     },
     chart: {
       countSeller: 'charts/countSellerInSystem',
@@ -106,11 +108,30 @@ export default {
       updateAdressSellerOpt1: 'orders/{orderId}/edited-Order-Option-One',
     },
     chat: {
-      getAllMessages: 'chatMessage/listMessage/{groupId}',
-      getChatGroupInfo: 'messageWebSocket/chat-group-info/{chatGroupId}',
+      getAllMessages: 'messageWebSocket/listMessageV2/{groupId}',
+      getChatGroupInfo: 'messageWebSocket/chat-group-infoV2/{chatGroupId}',
     },
     system: {
       getAllConfigData: 'systemConfig/getListSystemConfig',
+    },
+    ship: {
+      sellerCreateShipRequest: 'shipRequest/seller/create-ship-request/{orderId}',
+      getAllShipRequest: 'shipRequest/get-ship-request-not-login',
+      cancelShipRequest: '',
+      staffConfirmShipRequest: 'shipRequest/staff/confirm-to-waiting-for-delivery/{shipRequestId}',
+      StaffChangeShipRequestToOnDelivery: 'shipRequest/staff/change-to-on-delivery/{shipRequestId}',
+      StaffChangeShipRequestToDelivered: 'shipRequest/staff/change-to-delivered/{shipRequestId}',
+    },
+    withdrawAndRefunds: {
+      getAllWithdraws: 'withdrawAndRefunds',
+      adminConfirmSellerwithdrawOpt2:
+        'withdrawAndRefunds/admin/{withdrawAndRefundRequestsId}/confirm-withdraw-request-option-two',
+      sellerWithdrwaOpt2: 'withdrawAndRefunds/seller/{orderId}/create-withdraw-request-option-two',
+    },
+    report: {
+      buyerReportSellerOpt1: 'report/buyer/report-seller-option1/{orderId}',
+      sellerReportBuyerOpt1: 'report/seller/report-buyer-option1/{orderId}',
+      getAllReportData: 'report',
     },
   },
 }

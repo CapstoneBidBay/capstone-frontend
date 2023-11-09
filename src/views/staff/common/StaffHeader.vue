@@ -56,9 +56,9 @@ const userStore = useUserStore()
             </svg>
             <span class="sr-only">Toggle sidebar</span>
           </button>
-          <RouterLink to="/admin/dashboard" class="flex items-center justify-between mr-4">
+          <RouterLink to="#" class="flex items-center justify-between mr-4">
             <img src="https://flowbite.s3.amazonaws.com/logo.svg" class="mr-3 h-8" alt="Flowbite Logo" />
-            <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">Admin</span>
+            <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">Staff</span>
           </RouterLink>
         </div>
         <div class="flex items-center lg:order-2">
@@ -79,8 +79,8 @@ const userStore = useUserStore()
             class="hidden z-50 my-4 w-56 text-base list-none bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700 dark:divide-gray-600 rounded-xl"
             id="dropdown">
             <div class="py-3 px-4">
-              <span class="block text-sm font-semibold text-gray-900 dark:text-white">Admin</span>
-              <span class="block text-sm text-gray-900 truncate dark:text-white">admin@bidbay.com</span>
+              <span class="block text-sm font-semibold text-gray-900 dark:text-white">Staff</span>
+              <span class="block text-sm text-gray-900 truncate dark:text-white">staff@bidbay.com</span>
             </div>
             <ul class="py-1 text-gray-700 dark:text-gray-300" aria-labelledby="dropdown">
               <!-- <li>
@@ -161,106 +161,10 @@ const userStore = useUserStore()
               <span class="ml-3">Dashboard</span>
             </a>
           </li> -->
-          <li>
-            <RouterLink
-              to="/admin/dashboard"
-              class="flex items-center p-2 w-full text-base font-medium text-gray-900 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">
-              <svg
-                aria-hidden="true"
-                class="w-6 h-6 text-gray-800 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-                xmlns="http://www.w3.org/2000/svg">
-                <path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z"></path>
-                <path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z"></path>
-              </svg>
-              <span class="ml-3">Dashboard</span>
-            </RouterLink>
-          </li>
-          <li>
-            <RouterLink
-              to="/admin/manage-users"
-              class="flex items-center p-2 w-full text-base font-medium text-gray-900 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">
-              <svg
-                class="w-6 h-6 text-gray-800 dark:text-white"
-                aria-hidden="true"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 14 18">
-                <path
-                  stroke="currentColor"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M7 8a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Zm-2 3h4a4 4 0 0 1 4 4v2H1v-2a4 4 0 0 1 4-4Z" />
-              </svg>
-              <span class="flex-1 ml-3 text-left whitespace-nowrap">Người dùng</span>
-            </RouterLink>
-          </li>
-          <li>
-            <RouterLink
-              to="/admin/manage-brands"
-              class="flex items-center p-2 w-full text-base font-medium text-gray-900 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">
-              <svg
-                class="w-6 h-6 text-gray-800 dark:text-white"
-                aria-hidden="true"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 19 18">
-                <path
-                  stroke="currentColor"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M13.583 5.445h.01M8.86 16.71l-6.573-6.63a.993.993 0 0 1 0-1.4l7.329-7.394A.98.98 0 0 1 10.31 1l5.734.007A1.968 1.968 0 0 1 18 2.983v5.5a.994.994 0 0 1-.316.727l-7.439 7.5a.975.975 0 0 1-1.385.001Z" />
-              </svg>
-              <span class="flex-1 ml-3 text-left whitespace-nowrap">Thương hiệu</span>
-            </RouterLink>
-          </li>
 
           <li>
             <RouterLink
-              to="/admin/manage-categories"
-              class="flex items-center p-2 w-full text-base font-medium text-gray-900 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">
-              <svg
-                class="w-6 h-6 text-gray-800 dark:text-white"
-                aria-hidden="true"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 20 20">
-                <path
-                  stroke="currentColor"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M8 3h4M8 17h4m-9-5V8m14 4V8M1 1h4v4H1V1Zm14 0h4v4h-4V1ZM1 15h4v4H1v-4Zm14 0h4v4h-4v-4Z" />
-              </svg>
-              <span class="flex-1 ml-3 text-left whitespace-nowrap">Thể loại</span>
-            </RouterLink>
-          </li>
-          <li>
-            <RouterLink
-              to="/admin/review-auctions"
-              class="flex items-center p-2 w-full text-base font-medium text-gray-900 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">
-              <svg
-                class="w-6 h-6 text-gray-800 dark:text-white"
-                aria-hidden="true"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 18 20">
-                <path
-                  stroke="currentColor"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="m6 9 2 3 5-5M9 19A18.55 18.55 0 0 1 1 4l8-3 8 3a18.549 18.549 0 0 1-8 15Z" />
-              </svg>
-              <span class="flex-1 ml-3 text-left whitespace-nowrap">Duyệt đấu giá</span>
-            </RouterLink>
-          </li>
-          <li>
-            <RouterLink
-              to="/admin/manage-withdraw"
+              to="/staff/manage-ship-request"
               class="flex items-center p-2 w-full text-base font-medium text-gray-900 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">
               <svg
                 class="w-6 h-6 text-gray-800 dark:text-white"
@@ -273,9 +177,29 @@ const userStore = useUserStore()
                   stroke-linecap="round"
                   stroke-linejoin="round"
                   stroke-width="2"
-                  d="M5 2a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1M2 5h12a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Zm8 5a2 2 0 1 1-4 0 2 2 0 0 1 4 0Z" />
+                  d="M15.5 10.25a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5Zm0 0a2.225 2.225 0 0 0-1.666.75H12m3.5-.75a2.225 2.225 0 0 1 1.666.75H19V7m-7 4V3h5l2 4m-7 4H6.166a2.225 2.225 0 0 0-1.666-.75M12 11V2a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v9h1.834a2.225 2.225 0 0 1 1.666-.75M19 7h-6m-8.5 3.25a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5Z" />
               </svg>
-              <span class="flex-1 ml-3 text-left whitespace-nowrap">Yêu cầu rút tiền</span>
+              <span class="flex-1 ml-3 text-left whitespace-nowrap">Yêu cầu giao hàng</span>
+            </RouterLink>
+          </li>
+          <li>
+            <RouterLink
+              to="/staff/manage-report"
+              class="flex items-center p-2 w-full text-base font-medium text-gray-900 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">
+              <svg
+                class="w-6 h-6 text-gray-800 dark:text-white"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 20 20">
+                <path
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+              </svg>
+              <span class="flex-1 ml-3 text-left whitespace-nowrap">Báo cáo</span>
             </RouterLink>
           </li>
         </ul>

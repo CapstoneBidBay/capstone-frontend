@@ -1,5 +1,7 @@
 import utils from "@/utils/customAxios"
 import url from "@/common/urlConstant";
+import loginService from "./login.service";
+import { Role } from "@/common/contract";
 
 
 const updateProfileData = async (data) => {
@@ -66,6 +68,22 @@ const getAllNotification = async () => {
   return response ? response.data : response
 }
 
+const isAllRequiredInformationFilled = async (roleName) => {
+  try {
+    const response = await loginService.fetchUserInfo()
+    if(roleName === Role.seller.value && (!response.data.citizenCardVerified || !response.data.address)){
+      return false
+    }
+    if(!response.data.bankAccountNumber || !response.data.bankOwnerName || !response.data.bankInformation){
+      return false
+    }
+    return true
+  } catch (e){
+    console.log(e)
+    return false
+  }
+}
+
 export default {
-  updateProfileData, updateAvatar, updateEmail, resendEmailOtp, verifyEmailOtp, uploadCCCD, getCCCD, getAllNotification
+  updateProfileData, updateAvatar, updateEmail, resendEmailOtp, verifyEmailOtp, uploadCCCD, getCCCD, getAllNotification, isAllRequiredInformationFilled
 }

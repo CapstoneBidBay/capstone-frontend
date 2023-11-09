@@ -8,12 +8,18 @@ import ProductReject from '@/components/manage-product/ProductReject.vue'
 import Messenger from '@/views/common/Messenger.vue'
 import ProductInOrderImmediate from '@/components/manage-product/ProductInOrderImmediate.vue'
 import ProductInOrderIntermediate from '@/components/manage-product/ProductInOrderIntermediate.vue'
+import TestComponent from '@/views/TestComponent.vue'
 const seller_router = [
   {
     name: 'all-page-seller',
     path: '/',
     component: ManagerAllPage,
     children: [
+      {
+        name: 'test',
+        path: '/test',
+        component: TestComponent
+      },
       {
         name: 'product-store',
         path: '/manage/product-inventory',
