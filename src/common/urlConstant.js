@@ -3,6 +3,16 @@ const DOMAIN_URL = import.meta.env.VITE_DOMAIN_URL
 const WS_URL = import.meta.env.VITE_WEB_SOCKET_SERVER_URL
 const WS_AUTH = import.meta.env.VITE_WEB_SOCKET_AUTH
 
+export const firebaseConfig = {
+  apiKey: import.meta.env.VITE_API_KEY,
+  authDomain: import.meta.env.VITE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_MESSAGINGSENDERID,
+  appId: import.meta.env.VITE_APP_ID,
+  measurementId: import.meta.env.VITE_MEASUREMENT_ID
+}
+
 export default {
   domain: DOMAIN_URL,
   base: SERVICE_URL,
@@ -93,6 +103,8 @@ export default {
     transaction: {
       option2VnPay: 'transaction/paymentAuctionOfOrder/vnPay',
       paymentForChatVnPay: 'transaction/paymentForMessaging/vnPay',
+      getTransactionAdmin: 'transaction/admin/transactionsOfUser',
+      getTransactionBuyerSeller: 'transaction/transactionsOfUser',
     },
     notification: {
       getAllNoti: 'notification/list-top-10-notification-user',
@@ -110,6 +122,7 @@ export default {
     chat: {
       getAllMessages: 'messageWebSocket/listMessageV2/{groupId}',
       getChatGroupInfo: 'messageWebSocket/chat-group-infoV2/{chatGroupId}',
+      joinChatGroup: 'messageWebSocket/staff/join-chat-groupV2/{groupId}'
     },
     system: {
       getAllConfigData: 'systemConfig/getListSystemConfig',
@@ -131,7 +144,9 @@ export default {
     report: {
       buyerReportSellerOpt1: 'report/buyer/report-seller-option1/{orderId}',
       sellerReportBuyerOpt1: 'report/seller/report-buyer-option1/{orderId}',
-      getAllReportData: 'report',
+      getAllReportDataAdmin: 'report',
+      getAllReportDataBuyerOrSeller: 'report/sellerOrBuyer/getAllReport',
+      getAllReportDataStaff: 'report/staff/getAllReport',
     },
   },
 }

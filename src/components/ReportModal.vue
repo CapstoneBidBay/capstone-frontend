@@ -54,7 +54,7 @@ const handleFileUpload = async e => {
         <template #button>
             <div>
                 <button
-                    @click="onModalConfirm()"
+                    @click="onModalDecline()"
                     class="bg-white hover:!bg-blue-200 text-black font-bold py-2 px-4 rounded border focus:outline-none focus:shadow-outline"
                     type="button">
                     Đóng

@@ -15,12 +15,12 @@ export const buyerTabs = {
   bought: {
     value: 'Thắng đấu giá',
     icon: 'streamline:computer-desktop-check-success-approve-device-display-desktop-computer',
-    navLink: '/bought',
+    navLink: '/bought/immediate',
   },
   order: {
     value: 'Lịch sử Đơn hàng',
     icon: 'fluent-mdl2:product-release',
-    navLink: '/orders',
+    navLink: '/orders/immediate',
   },
   reported: {
     value: 'Lịch sử báo cáo',
@@ -32,10 +32,37 @@ export const buyerTabs = {
     icon: 'akar-icons:arrow-back',
     navLink: '/refunds',
   },
+  transaction: {
+    value: 'Lịch sử giao dịch',
+    icon: 'icon-park-outline:transaction',
+    navLink: '/transaction',
+  },
   favorites: {
     value: 'Yêu thích',
     icon: 'streamline:interface-favorite-heart-reward-social-rating-media-heart-it-like-favorite-love',
     navLink: '/favorites',
+  },
+}
+
+export const sellerTabs = {
+  
+}
+
+export const staffTabs = {
+  shipRequests: {
+    value: 'Yêu cầu giao hàng',
+    icon: 'gridicons:shipping',
+    navLink: '/staff/manage-ship-request',
+  },
+  allReports: {
+    value: 'Danh sách khiếu nại',
+    icon: 'ep:document',
+    navLink: '/staff/manage-report'
+  },
+  reports: {
+    value: 'Giải quyết khiếu nại',
+    icon: 'fluent-mdl2:report-warning',
+    navLink: '/staff/manage-report'
   },
 }
 

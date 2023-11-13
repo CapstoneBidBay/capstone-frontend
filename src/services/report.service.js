@@ -2,9 +2,9 @@ import utils from '@/utils/customAxios'
 import url from '../common/urlConstant'
 
 const getAllReportData = async () => {
-    const serviceUrl = url.endpoint.report.getAllReportData + "?page=1&size=1000"
-    const response = await utils.axiosLocalHost.get(serviceUrl)
-    return response ? response.data : response
+  const serviceUrl = url.endpoint.report.getAllReportData + '?page=1&size=1000'
+  const response = await utils.axiosLocalHost.get(serviceUrl)
+  return response ? response.data : response
 }
 
 const sellerReportBuyerOption1 = async (orderId, formData) => {
@@ -28,9 +28,21 @@ const buyerReportSellerOption1 = async (orderId, formData) => {
   })
   return response ? response.data : response
 }
+const getAllReportDataBuyerOrSeller = async () => {
+  const serviceUrl = url.endpoint.report.getAllReportDataBuyerOrSeller + '?page=1&size=1000'
+  const response = await utils.axiosLocalHost.get(serviceUrl)
+  return response ? response.data : response
+}
 
+const getAllReportDataStaff = async () => {
+  const serviceUrl = url.endpoint.report.getAllReportDataStaff + '?page=1&size=1000'
+  const response = await utils.axiosLocalHost.get(serviceUrl)
+  return response ? response.data : response
+}
 export default {
-    sellerReportBuyerOption1,
-    buyerReportSellerOption1,
-    getAllReportData
+  sellerReportBuyerOption1,
+  buyerReportSellerOption1,
+  getAllReportData,
+  getAllReportDataBuyerOrSeller,
+  getAllReportDataStaff,
 }
