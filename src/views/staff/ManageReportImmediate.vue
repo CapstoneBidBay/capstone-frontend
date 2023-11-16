@@ -11,6 +11,9 @@ import ListExpandableImage from '@/components/ListExpandableImage.vue'
 import { AuctionModelType, Role } from '@/common/contract'
 import chatService from '@/services/chat.service'
 import { useRouter } from 'vue-router'
+import TwoOptionsTab from '@/components/TwoOptionsTab.vue'
+import { staffTabs } from '@/common/constant'
+import toastOption from '@/utils/toast-option'
 
 const router = useRouter()
 
@@ -31,7 +34,7 @@ const currentPage = ref(1)
 const getAllReportStaff = async () => {
   try {
     const response = await reportService.getAllReportDataStaff()
-    reportList.value = response.data
+    reportList.value = response.data.filter(f => f.aboutOrder.modelTypeAuctionOfOrder === AuctionModelType.immediate)
   } catch (e) {
     console.error(e)
   }
@@ -40,6 +43,33 @@ const getAllReportStaff = async () => {
 const onJoinChat = async (groupId) => {
   await chatService.staffJoinChat(groupId)
   router.push(`/messenger/${groupId}`)
+}
+
+const onRejectReport = async (reportId) => {
+  if(!confirm("Bạn có chắc chắn muốn từ chối tố cáo này không?")){
+    return
+  }
+  try {
+    await reportService.staffDeclineReportOpt1(reportId)
+    toastOption.toastSuccess("Từ chối tố cáo thành công")
+    getAllReportStaff()
+    isModalVisible.value = false
+  } catch (_) {
+    toastOption.toastError("Có lỗi khi xử lý, vui lòng tải lại trang và thử lại.")
+  }
+}
+const onConfirmReport = async (reportId) => {
+  if(!confirm("Bạn có chắc chắn muốn xác nhận tố cáo này là chính xác không?")){
+    return
+  }
+  try {
+    await reportService.staffConfirmReportOpt1(reportId)
+    toastOption.toastSuccess("Xác nhận tố cáo thành công")
+    getAllReportStaff()
+    isModalVisible.value = false
+  } catch (_) {
+    toastOption.toastError("Có lỗi khi xử lý, vui lòng tải lại trang và thử lại.")
+  }
 }
 
 
@@ -76,12 +106,17 @@ onMounted(() => {
 
 <template>
   <StaffHeader />
-  <StaffSideBarLayout>
+  <StaffSideBarLayout :cur-tab="staffTabs.reports.value">
     <div class="bg-white container mx-auto rounded w-full min-h-[80vh]">
       <!-- Header -->
       <div class="pt-3 px-3 pb-1 flex items-center justify-between">
         <div class="font-bold text-2xl text-black text-blue-800">
           Lịch sử báo cáo</div>
+        <TwoOptionsTab
+          immediate-option-nav="/staff/report/immediate"
+          intermediate-option-nav="/staff/report/intermediate"
+          :cur-tab="AuctionModelType.immediate"
+        />
       </div>
       <section class="bg-white sm:p-5">
         <div class="mx-auto px-4">
@@ -263,18 +298,26 @@ onMounted(() => {
       </div>
       <div>
         <button
-          v-if="report?.aboutOrder.modelTypeAuctionOfOrder === AuctionModelType.intermediate"
-          @click="onJoinChat(report?.aboutOrder.id)"
-          class="bg-blue-700 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded border focus:outline-none focus:shadow-outline"
-          type="button">
-            Tạo nhóm chat
-        </button>
-        <button
-          v-else
           @click="onJoinChat(report?.aboutOrder.chatGroupDTOs.id)"
           class="bg-blue-700 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded border focus:outline-none focus:shadow-outline"
           type="button">
             Vào nhóm chat
+        </button>
+      </div>
+      <div>
+        <button
+          @click="onConfirmReport(report?.id)"
+          class="bg-blue-700 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded border focus:outline-none focus:shadow-outline"
+          type="button">
+            Xác nhận tố cáo chính xác
+        </button>
+      </div>
+      <div>
+        <button
+          @click="onRejectReport(report?.id)"
+          class="bg-red-700 hover:bg-red-800 text-white font-bold py-2 px-4 rounded border focus:outline-none focus:shadow-outline"
+          type="button">
+            Bãi bỏ tố cáo
         </button>
       </div>
     </template>

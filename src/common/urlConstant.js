@@ -84,7 +84,7 @@ export default {
       auctionDetail: 'guest/{id}/auction-detail-guest',
       auctionHistory: 'guest/auction-guest/{auctionId}',
       categories: 'guest/categories-guest',
-      brands: 'guest/brands-guest'
+      brands: 'guest/brands-guest',
     },
     chart: {
       countSeller: 'charts/countSellerInSystem',
@@ -122,7 +122,8 @@ export default {
     chat: {
       getAllMessages: 'messageWebSocket/listMessageV2/{groupId}',
       getChatGroupInfo: 'messageWebSocket/chat-group-infoV2/{chatGroupId}',
-      joinChatGroup: 'messageWebSocket/staff/join-chat-groupV2/{groupId}'
+      joinChatGroup: 'messageWebSocket/staff/join-chat-groupV2/{groupId}',
+      createChatGroup: 'messageWebSocket/staff/create-chat-groupV2/{orderId}'
     },
     system: {
       getAllConfigData: 'systemConfig/getListSystemConfig',
@@ -134,6 +135,7 @@ export default {
       staffConfirmShipRequest: 'shipRequest/staff/confirm-to-waiting-for-delivery/{shipRequestId}',
       StaffChangeShipRequestToOnDelivery: 'shipRequest/staff/change-to-on-delivery/{shipRequestId}',
       StaffChangeShipRequestToDelivered: 'shipRequest/staff/change-to-delivered/{shipRequestId}',
+      buyerConfirmDelivered: 'shipRequest/buyer/confirm-ship-request-delivered/{shipRequestId}',
     },
     withdrawAndRefunds: {
       getAllWithdraws: 'withdrawAndRefunds',
@@ -147,6 +149,11 @@ export default {
       getAllReportDataAdmin: 'report',
       getAllReportDataBuyerOrSeller: 'report/sellerOrBuyer/getAllReport',
       getAllReportDataStaff: 'report/staff/getAllReport',
+      buyerReportSellerOpt2: 'report/buyer/report-seller-option2/{orderId}',
+      confirmReportOpt1: 'report/staff/confirm-report/{reportId}',
+      declineReportOpt1: 'report/staff/reject-report/{reportId}',
+      confirmReportOpt2ForBuyer: 'report/staff/confirm-buyer-report/{reportId}',
+      assignReport: 'report/staff/assign-report/{reportId}'
     },
   },
 }

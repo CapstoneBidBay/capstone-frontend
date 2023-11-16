@@ -1,13 +1,11 @@
 <script setup>
 import { onMounted, ref, watch } from 'vue'
 import SearchInput from '../common-components/SearchInput.vue'
-import auctionService from '@/services/auction.service'
 import Modal from '../common-components/Modal.vue'
 import formatCurrency from '@/utils/currency-output-formatter'
 import moment from 'moment'
-import ItemSold from '../common-components/item-box/ItemSold.vue'
 import imageHelper from '@/utils/image-helper'
-import { AuctionModelType, OrderStatus } from '@/common/contract'
+import { AuctionModelType, OrderStatus, ShipRequestType } from '@/common/contract'
 import { Icon } from '@iconify/vue'
 import Dropdown from '../common-components/Dropdown.vue'
 import Button from '@/components/common-components/Button.vue'
@@ -19,6 +17,8 @@ import { useRouter } from 'vue-router'
 import ShipRequestService from '@/services/shiprequest.service'
 import toastOption from '@/utils/toast-option'
 import withdraw from '../../services/withdraw.service'
+import ReportService from '@/services/report.service'
+import ReportModal from '@/components/ReportModal.vue'
 
 const router = useRouter()
 
@@ -28,15 +28,12 @@ const detail = ref(null)
 
 const isModalVisible = ref(false)
 const isUpdating = ref(false)
-const hasShip = ref(false)
-const hasShipRequest = async orderId => {
-  try {
-    const query = 'shipRequest_orderId:' + orderId
-    const response = await ShipRequestService.getAllShipRequest(query)
-    hasShip.value = response && response.data && response.data.length > 0
-  } catch (error) {
-    console.error('Error checking ship request:', error)
-  }
+const isReportModalOpen = ref(false)
+const openReportModal = () => {
+  isReportModalOpen.value = true
+}
+const closeReportModal = () => {
+  isReportModalOpen.value = false
 }
 // Filter
 const options = ref([
@@ -70,9 +67,8 @@ const filterData = async () => {
 // Business functions
 const handleDepositRequest = async orderId => {
   try {
-    const response = await withdraw.sellerWithdrwaOpt2(orderId)
+    await withdraw.sellerWithdrwaOpt2(orderId)
     toastOption.toastSuccess('Tạo yêu cầu rút tiền thành công')
-    console.log(response)
   } catch (error) {
     toastOption.toastError('Tạo yêu cầu rút tiền thất bại')
     console.error('Error creating ship request:', error)
@@ -80,9 +76,10 @@ const handleDepositRequest = async orderId => {
 }
 const handleCreateShipRequest = async orderId => {
   try {
-    const response = await ShipRequestService.sellerCreateShipRequest(orderId)
+    closeModal()
+    await ShipRequestService.sellerCreateShipRequest(orderId)
     toastOption.toastSuccess('Tạo yêu cầu giao hàng thành công')
-    console.log(response)
+    fetchOrders()
   } catch (error) {
     toastOption.toastError('Tạo yêu cầu giao hàng thất bại')
     console.error('Error creating ship request:', error)
@@ -92,8 +89,6 @@ const handleCreateShipRequest = async orderId => {
 // Page operations
 const activateInfoAuction = order => {
   detail.value = order
-  hasShipRequest(detail.value.id)
-  console.log(detail.value)
   isModalVisible.value = true
 }
 function closeModal() {
@@ -105,7 +100,20 @@ function handleConfirm() {
 
 const fetchOrders = async () => {
   const response = await OrderService.getAllOrders('', 1, 1000, '')
-  orders.value = response.data ? response.data : []
+  orders.value = response.data ? response.data.map(f => {
+    if(!f.shipRequestList){
+      return f
+    }
+    if(f.shipRequestList.length === 1){
+      f.sellerShipRequest = f.shipRequestList[0]
+      return f
+    }
+    if(f.shipRequestList.length === 2){
+      f.sellerShipRequest = f.shipRequestList.filter(d => d.type === ShipRequestType.SELLER_SHIP)[0]
+      f.buyerShipRequest = f.shipRequestList.filter(d => d.type === ShipRequestType.BUYER_RETURN)[0]
+    }
+    return f
+  }) : []
   filterData()
 }
 
@@ -135,7 +143,9 @@ onMounted(() => {
         :secondaryImage="imageHelper.getSecondaryImageFromList(item.productResponse.imageUrls)"
         :auction-type="item.modelTypeAuctionOfOrder"
         :orderId="item.id"
-        :hasShipRequest="item.hasShipRequest"
+        :statusShipRequest="item.sellerShipRequest?.status"
+        :statusReturnRequest="item.buyerShipRequest?.status"
+        :is-completed="item.statusOrder === OrderStatus.DONE.value"
         :chatGroupId="item.chatGroupDTOs.id ? item.chatGroupDTOs.id : ''"
         :created-at="item?.createAt ? moment.utc(item?.createAt).format('DD/MM/YYYY HH:mm:ss') : 'N/A'" />
     </div>
@@ -223,7 +233,7 @@ onMounted(() => {
             :disabled="
               isUpdating ||
               detail?.statusOrder === OrderStatus.CONFIRM_DELIVERY.value ||
-              detail?.statusOrder === OrderStatus.DONE.value
+              detail?.statusOrder !== OrderStatus.DONE.value
             "
             @on-click="handleDepositRequest(detail?.id)">
             <div class="flex items-center">
@@ -233,7 +243,7 @@ onMounted(() => {
         </div>
         <div>
           <Button
-            v-if="detail?.modelTypeAuctionOfOrder !== AuctionModelType.immediate && !hasShip"
+            v-if="detail?.modelTypeAuctionOfOrder !== AuctionModelType.immediate && !detail?.hasShipRequest"
             :disabled="isUpdating || detail?.statusOrder === OrderStatus.CONFIRM_DELIVERY.value"
             @on-click="handleCreateShipRequest(detail?.id)">
             <div class="flex items-center">

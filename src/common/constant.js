@@ -57,12 +57,12 @@ export const staffTabs = {
   allReports: {
     value: 'Danh sách khiếu nại',
     icon: 'ep:document',
-    navLink: '/staff/manage-report'
+    navLink: '/staff/report/unassigned'
   },
   reports: {
     value: 'Giải quyết khiếu nại',
     icon: 'fluent-mdl2:report-warning',
-    navLink: '/staff/manage-report'
+    navLink: '/staff/report/immediate'
   },
 }
 

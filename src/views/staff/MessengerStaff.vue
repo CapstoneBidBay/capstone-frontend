@@ -11,11 +11,7 @@ import MessageBubble from "@/components/messenger/MessageBubble.vue";
 import ChatService from "@/services/chat.service"
 import UserMessageCard from "@/components/messenger/UserMessageCard.vue";
 import { Tooltip } from 'ant-design-vue';
-import BuyerOrderDetailModal from "@/components/messenger/BuyerOrderDetailModal.vue";
-import orderService from "@/services/order.service";
-import reportService from "@/services/report.service";
 import toastOption from "@/utils/toast-option";
-import ReportModal from "@/components/ReportModal.vue";
 import ListEditableImage from "@/components/ListEditableImage.vue";
 import { useFirebaseStore } from "@/stores/firebase.store";
 import { base64Image } from "@/utils/imageFile";
@@ -79,8 +75,7 @@ const curRole = computed(() => {
   return userStore.getRoleAndGetFromLocalStorageIfNotExist()
 })
 
-
-const backLink = '/staff/manage-report'
+const backLink = '/staff/report/immediate'
 
 const scrollMessageBoxToBottom = async () => {
   await nextTick()
@@ -132,10 +127,6 @@ const fetchChatInfo = async () => {
   groupId = route.params['groupId']
   const response = await ChatService.getGroupInfo(groupId)
   groupInfo.value = response.data
-  orderDetail.value = groupInfo.value.order
-  sttChange.value = groupInfo.value.order.statusOrder
-  curAddress.value = groupInfo.value.order.buyerAddress
-  curPhone.value = groupInfo.value.order.buyerPhoneNumber
 }
 const initMessageDtos = async () => {
   await fetchAllMessages()
@@ -149,7 +140,6 @@ const initMessageDtos = async () => {
       createAt: messData.createAt,
     }
   })
-  console.log(messageDtos.value)
   scrollMessageBoxToBottom()
 }
 const initStompClient = () => {
@@ -222,19 +212,19 @@ onBeforeUnmount(() => {
               <div class="flex flex-col space-y-1 mt-2">
                 <!-- For buyer only -->
                 <button
-                  v-if="curRole === Role.staff.value"
-                  @click="onSellerJudge"
+                  v-if="curRole === Role.staff.value && sellerReportId"
+                  @click="isSellerWinConfirm = true"
                   class="flex items-center justify-center text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2.5 text-center mb-2">
                   Xác nhận người bán đúng
                 </button>
                 <button
-                  v-if="curRole === Role.staff.value"
-                  @click="onBuyerJudge"
+                  v-if="curRole === Role.staff.value && buyerReportId"
+                  @click="isBuyerWinConfirm = true"
                   class="text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mb-2 hover:cursor-pointer">
                   Xác nhận người mua đúng
                 </button>
                 <button
-                  @click="onTerminateChatGroup"
+                  @click="isCloseChatConfirm = true"
                   class="text-white bg-gradient-to-r from-red-400 via-red-500 to-red-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mb-2">
                   Khóa đoạn chat
                 </button>
@@ -354,7 +344,7 @@ onBeforeUnmount(() => {
       widthClass="w-[900px]"
       :hasOverFlowVertical="true"
       :hasButton="true"
-      button-label="Mua ngay"
+      button-label="Xác nhận"
       @decline-modal="isBuyerWinConfirm = false"
       @confirm-modal="onBuyerWinConfirm"
       title="Xác nhận mua ngay">
@@ -366,7 +356,7 @@ onBeforeUnmount(() => {
       widthClass="w-[900px]"
       :hasOverFlowVertical="true"
       :hasButton="true"
-      button-label="Mua ngay"
+      button-label="Xác nhận"
       @decline-modal="isSellerWinConfirm = false"
       @confirm-modal="onSellerWinConfirm"
       title="Xác nhận mua ngay">
@@ -378,7 +368,7 @@ onBeforeUnmount(() => {
       widthClass="w-[900px]"
       :hasOverFlowVertical="true"
       :hasButton="true"
-      button-label="Mua ngay"
+      button-label="Xác nhận"
       @decline-modal="isCloseChatConfirm = false"
       @confirm-modal="onChatCloseConfirm"
       title="Xác nhận mua ngay">
